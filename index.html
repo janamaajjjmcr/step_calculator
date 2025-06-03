@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>حاسبة اختبار STEP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(to right, #f6f9fc, #e6ecf0);
+      padding: 30px;
+      margin: 0;
+      color: #333;
+    }
+    .container {
+      background-color: #ffffff;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      padding: 30px 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 25px;
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+    }
+    select, input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      background-color: #fdfdfd;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .result {
+      margin-top: 30px;
+      background-color: #f1f7fd;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #d0e5f7;
+    }
+    .result h3 {
+      margin-top: 0;
+      color: #2980b9;
+    }
+    .note {
+      font-size: 14px;
+      color: #888;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .emoji {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>حاسبة اجتياز اختبار STEP</h1>
+
+    <label>اختر تخصصك:</label>
+    <select id="major">
+      <option value="1">قانون أو إعلام رقمي (مسار عربي)</option>
+      <option value="2">لغات وترجمة (مسار إنجليزي)</option>
+      <option value="3">بقية التخصصات (مسار إنجليزي)</option>
+    </select>
+
+    <label>أدخل درجتك في STEP:</label>
+    <input type="number" id="stepScore" placeholder="مثلاً: 58" min="0" max="100">
+
+    <button onclick="calculate()">احسب الآن</button>
+
+    <div class="result" id="output" style="display:none;"></div>
+
+    <div class="note">
+      تم جبر جميع الكسور – النظام لا يشمل الفصل الصيفي.
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      const major = document.getElementById("major").value;
+      const step = parseInt(document.getElementById("stepScore").value);
+      const output = document.getElementById("output");
+
+      if (isNaN(step) || step < 0 || step > 100) {
+        alert("يرجى إدخال درجة صحيحة بين 0 و 100");
+        return;
+      }
+
+      let min_pass, delete_score, factor, name;
+
+      if (major === "1") {
+        min_pass = 45;
+        delete_score = 68;
+        factor = 4.4;
+        name = "قانون / إعلام رقمي";
+      } else if (major === "2") {
+        min_pass = 65;
+        delete_score = 83;
+        factor = 11.11;
+        name = "لغات وترجمة";
+      } else {
+        min_pass = 60;
+        delete_score = 83;
+        factor = 8.7;
+        name = "بقية التخصصات";
+      }
+
+      let passed = step >= min_pass;
+      let deleted = step >= delete_score;
+      let diff = delete_score - step;
+      let requiredWork = Math.max(Math.round(diff * factor), 0);
+
+      output.style.display = "block";
+      output.innerHTML = `
+        <h3>نتائج التقييم 📊</h3>
+        <p><strong>🔸 التخصص:</strong> ${name}</p>
+        <p><strong>🔸 درجتك في STEP:</strong> ${step}</p>
+        <p><strong>🔸 الحالة:</strong> ${passed ? '✔️ اجتزت الحد الأدنى المطلوب.' : '❌ لم تجتز الحد المطلوب بعد.'}</p>
+        <p><strong>🔸 حذف المقرر:</strong> ${deleted ? '🎉 تم حذف مقرر اللغة الإنجليزية.' : `✳️ تحتاج ${delete_score - step} درجات إضافية في STEP للحذف.`}</p>
+        <p><strong>📘 أعمال السنة المطلوبة:</strong> ${requiredWork} / 200</p>
+      `;
+    }
+  </script>
+
+</body>
+</html>
