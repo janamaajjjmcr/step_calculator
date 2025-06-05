@@ -5,9 +5,7 @@
   <title>حاسبة اختبار STEP</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       font-family: 'Cairo', sans-serif;
       background: linear-gradient(to right, #f6f9fc, #e6ecf0);
@@ -53,9 +51,7 @@
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
-    button:hover {
-      background-color: #2980b9;
-    }
+    button:hover { background-color: #2980b9; }
     .result {
       margin-top: 30px;
       background-color: #f1f7fd;
@@ -63,91 +59,113 @@
       border-radius: 12px;
       border: 1px solid #d0e5f7;
     }
-    .result h3 {
-      margin-top: 0;
-      color: #2980b9;
-    }
+    .result h3 { margin-top: 0; color: #2980b9; }
     .note {
       font-size: 14px;
       color: #888;
       margin-top: 20px;
       text-align: center;
     }
-    .emoji {
-      font-size: 20px;
-    }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>حاسبة اجتياز اختبار STEP</h1>
+<div class="container">
+  <h1>حاسبة اجتياز اختبار STEP</h1>
 
-    <label>اختر تخصصك:</label>
-    <select id="major">
-      <option value="1">قانون أو إعلام رقمي (مسار عربي)</option>
-      <option value="2">لغات وترجمة (مسار إنجليزي)</option>
-      <option value="3">بقية التخصصات (مسار إنجليزي)</option>
-    </select>
+  <label>اختر تخصصك:</label>
+  <select id="major">
+    <option value="1">قانون أو إعلام رقمي (مسار عربي)</option>
+    <option value="2">لغات وترجمة (مسار إنجليزي)</option>
+    <option value="3">بقية التخصصات (مسار إنجليزي)</option>
+  </select>
 
-    <label>أدخل درجتك في STEP:</label>
-    <input type="number" id="stepScore" placeholder="مثلاً: 58" min="0" max="100">
+  <label>أدخل درجتك في STEP:</label>
+  <input type="number" id="stepScore" placeholder="مثلاً: 58" min="0" max="100">
 
-    <button onclick="calculate()">احسب الآن</button>
+  <button onclick="calculate()">احسب الآن</button>
 
-    <div class="result" id="output" style="display:none;"></div>
+  <div class="result" id="output" style="display:none;"></div>
 
-    <div class="note">
-      تم جبر جميع الكسور – النظام لا يشمل الفصل الصيفي.
-    </div>
+  <div class="note">
+    تم جبر جميع الكسور – النظام لا يشمل الفصل الصيفي.
   </div>
+</div>
 
-  <script>
-    function calculate() {
-      const major = document.getElementById("major").value;
-      const step = parseInt(document.getElementById("stepScore").value);
-      const output = document.getElementById("output");
+<script>
+  function calculate() {
+    const major = document.getElementById("major").value;
+    const step = parseInt(document.getElementById("stepScore").value);
+    const output = document.getElementById("output");
 
-      if (isNaN(step) || step < 0 || step > 100) {
-        alert("يرجى إدخال درجة صحيحة بين 0 و 100");
-        return;
-      }
+    if (isNaN(step) || step < 0 || step > 100) {
+      alert("يرجى إدخال درجة صحيحة بين 0 و 100");
+      return;
+    }
 
-      let min_pass, delete_score, factor, name;
+    let min_pass, delete_score, factor, name;
 
-      if (major === "1") {
-        min_pass = 45;
-        delete_score = 68;
-        factor = 4.4;
-        name = "قانون / إعلام رقمي";
-      } else if (major === "2") {
-        min_pass = 65;
-        delete_score = 83;
-        factor = 11.11;
-        name = "لغات وترجمة";
-      } else {
-        min_pass = 60;
-        delete_score = 83;
-        factor = 8.7;
-        name = "بقية التخصصات";
-      }
+    if (major === "1") {
+      min_pass = 45;
+      delete_score = 68;
+      factor = 4.4;
+      name = "قانون / إعلام رقمي";
+    } else if (major === "2") {
+      min_pass = 65;
+      delete_score = 83;
+      factor = 11.11;
+      name = "لغات وترجمة";
+    } else {
+      min_pass = 60;
+      delete_score = 83;
+      factor = 8.7;
+      name = "بقية التخصصات";
+    }
 
-      let passed = step >= min_pass;
-      let deleted = step >= delete_score;
-      let diff = delete_score - step;
-      let requiredWork = Math.max(Math.round(diff * factor), 0);
+    let passed = step >= min_pass;
+    let deleted = step >= delete_score;
+    let diff = delete_score - step;
+    let requiredWork = Math.round(diff * factor);
+    if (requiredWork < 0) requiredWork = 0;
 
-      output.style.display = "block";
+    output.style.display = "block";
+
+    // حالة اجتياز الحذف
+    if (deleted) {
       output.innerHTML = `
         <h3>نتائج التقييم 📊</h3>
         <p><strong>🔸 التخصص:</strong> ${name}</p>
         <p><strong>🔸 درجتك في STEP:</strong> ${step}</p>
-        <p><strong>🔸 الحالة:</strong> ${passed ? '✔️ اجتزت الحد الأدنى المطلوب.' : '❌ لم تجتز الحد المطلوب بعد.'}</p>
-        <p><strong>🔸 حذف المقرر:</strong> ${deleted ? '🎉 تم حذف مقرر اللغة الإنجليزية.' : `✳️ تحتاج ${delete_score - step} درجات إضافية في STEP للحذف.`}</p>
-        <p><strong>📘 أعمال السنة المطلوبة:</strong> ${requiredWork} / 200</p>
+        <p><strong>✔️ اجتزت الحد الأدنى المطلوب.</strong></p>
+        <p><strong>🔸 حذف المقرر:</strong> 🎉 تم حذف مقرر اللغة الإنجليزية.</p>
+        <p><strong>📘 أعمال السنة المطلوبة:</strong> 0 / 200</p>
       `;
+      return;
     }
-  </script>
 
+    // حالة لم يجتز الحد الأدنى واحتاج أكثر من 200 درجة
+    if (!passed && requiredWork > 200) {
+      output.innerHTML = `
+        <h3>نتائج التقييم 📊</h3>
+        <p><strong>🔸 التخصص:</strong> ${name}</p>
+        <p><strong>🔸 درجتك في STEP:</strong> ${step}</p>
+        <p><strong>❌ لم تجتز الحد الأدنى المطلوب.</strong></p>
+        <p><strong>📌 الدرجة الدنيا التي يجب الحصول عليها في STEP للاجتياز:</strong> ${min_pass}</p>
+        <p><strong>📘 أعمال السنة المطلوبة:</strong> 200 / 200</p>
+      `;
+      return;
+    }
+
+    // الحالة العادية
+    output.innerHTML = `
+      <h3>نتائج التقييم 📊</h3>
+      <p><strong>🔸 التخصص:</strong> ${name}</p>
+      <p><strong>🔸 درجتك في STEP:</strong> ${step}</p>
+      <p><strong>🔸 الحالة:</strong> ${passed ? '✔️ اجتزت الحد الأدنى المطلوب.' : '❌ لم تجتز الحد الأدنى المطلوب. حاول تحسين درجتك.'}</p>
+      <p><strong>🔸 حذف المقرر:</strong> ✳️ تحتاج ${diff} درجات إضافية في STEP للحذف.</p>
+      <p><strong>📘 أعمال السنة المطلوبة:</strong> ${requiredWork} / 200</p>
+    `;
+  }
+</script>
 </body>
 </html>
