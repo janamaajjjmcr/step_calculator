@@ -103,30 +103,33 @@
       return;
     }
 
-    let min_pass, delete_score, factor, name;
+    let min_pass, delete_score, factor, name, requiredWork;
 
     if (major === "1") {
       min_pass = 45;
       delete_score = 68;
       factor = 4.4;
       name = "قانون / إعلام رقمي";
+      requiredWork = 100; // التخصص القانوني 100 أعمال السنة
     } else if (major === "2") {
       min_pass = 65;
       delete_score = 83;
       factor = 11.11;
       name = "لغات وترجمة";
+      requiredWork = 200; // التخصصات الأخرى 200 أعمال السنة
     } else {
       min_pass = 60;
       delete_score = 83;
       factor = 8.7;
       name = "بقية التخصصات";
+      requiredWork = 200; // التخصصات الأخرى 200 أعمال السنة
     }
 
     let passed = step >= min_pass;
     let deleted = step >= delete_score;
     let diff = delete_score - step;
-    let requiredWork = Math.round(diff * factor);
-    if (requiredWork < 0) requiredWork = 0;
+    let workRequired = Math.round(diff * factor);
+    if (workRequired < 0) workRequired = 0;
 
     output.style.display = "block";
 
@@ -138,20 +141,20 @@
         <p><strong>🔸 درجتك في STEP:</strong> ${step}</p>
         <p><strong>✔️ اجتزت الحد الأدنى المطلوب.</strong></p>
         <p><strong>🔸 حذف المقرر:</strong> 🎉 تم حذف مقرر اللغة الإنجليزية.</p>
-        <p><strong>📘 أعمال السنة المطلوبة:</strong> 0 / 200</p>
+        <p><strong>📘 أعمال السنة المطلوبة:</strong> 0 / ${requiredWork}</p>
       `;
       return;
     }
 
     // حالة لم يجتز الحد الأدنى واحتاج أكثر من 200 درجة
-    if (!passed && requiredWork > 200) {
+    if (!passed && workRequired > requiredWork) {
       output.innerHTML = `
         <h3>نتائج التقييم 📊</h3>
         <p><strong>🔸 التخصص:</strong> ${name}</p>
         <p><strong>🔸 درجتك في STEP:</strong> ${step}</p>
         <p><strong>❌ لم تجتز الحد الأدنى المطلوب.</strong></p>
         <p><strong>📌 الدرجة الدنيا التي يجب الحصول عليها في STEP للاجتياز:</strong> ${min_pass}</p>
-        <p><strong>📘 أعمال السنة المطلوبة:</strong> 200 / 200</p>
+        <p><strong>📘 أعمال السنة المطلوبة:</strong> ${requiredWork} / ${requiredWork}</p>
       `;
       return;
     }
@@ -163,7 +166,7 @@
       <p><strong>🔸 درجتك في STEP:</strong> ${step}</p>
       <p><strong>🔸 الحالة:</strong> ${passed ? '✔️ اجتزت الحد الأدنى المطلوب.' : '❌ لم تجتز الحد الأدنى المطلوب. حاول تحسين درجتك.'}</p>
       <p><strong>🔸 حذف المقرر:</strong> ✳️ تحتاج ${diff} درجات إضافية في STEP للحذف.</p>
-      <p><strong>📘 أعمال السنة المطلوبة:</strong> ${requiredWork} / 200</p>
+      <p><strong>📘 أعمال السنة المطلوبة:</strong> ${workRequired} / ${requiredWork}</p>
     `;
   }
 </script>
